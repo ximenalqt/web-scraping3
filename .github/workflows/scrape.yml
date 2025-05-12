@@ -2,10 +2,10 @@ name: "Scrape"
 
 on:
   # Manually trigger the workflow  
-  workflow_dispatch:
+  #workflow_dispatch:
   # Or on a schedule
-  # schedule:
-  # - cron: "0 20 * * *"
+   schedule:
+   - cron: "0 6 * * *"  # Todos los días a las 6:00 AM UTC
   # Commented out to stop the web scrapping
 
 jobs:
