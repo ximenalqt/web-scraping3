@@ -31,9 +31,22 @@ jobs:
         pip install soupsieve
         pip install selenium beautifulsoup4 pandas --no-deps
 
-        
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
 
-        
+    - name: Download ChromeDriver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1)
+        DRIVER_URL="https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}"
+        DRIVER_VERSION=$(curl -sS $DRIVER_URL)
+        wget https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver    
+
+            
 
     - name: Execute
       run: python scrape.py
