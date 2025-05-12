@@ -28,7 +28,7 @@ jobs:
         pip install websocket-client
         pip install typing-extensions
         pip install numpy pytz python-dateutil
-
+        pip install soupsieve
         pip install selenium beautifulsoup4 pandas --no-deps
 
         
