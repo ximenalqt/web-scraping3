@@ -27,6 +27,9 @@ jobs:
         pip install certifi urllib3
 
         pip install selenium beautifulsoup4 pandas --no-deps
+
+        pip install websocket-client
+
         
 
     - name: Execute
