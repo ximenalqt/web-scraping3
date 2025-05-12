@@ -24,8 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install setuptools
-        pip install numpy==1.24.0
+
         pip install -r requirements.txt
 
     - name: Execute
