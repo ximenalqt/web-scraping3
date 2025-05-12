@@ -26,6 +26,8 @@ jobs:
         pip install --upgrade pip
         pip install certifi urllib3
         pip install websocket-client
+        pip install typing-extensions
+
         pip install selenium beautifulsoup4 pandas --no-deps
 
         
