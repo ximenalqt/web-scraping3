@@ -58,7 +58,7 @@ def fetch_entries_for_page(page_number, cutoff_date):
 
 all_current_entries = []
 
-for page in range(5, 7):
+for page in range(4, 5):
     print(f"Web scrapping page {page}")
     entries = fetch_entries_for_page(page, CUTOFF_DATE)
     if not entries:
