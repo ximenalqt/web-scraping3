@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install certifi
+        pip install certifi urllib3
 
         pip install selenium beautifulsoup4 pandas --no-deps
         
