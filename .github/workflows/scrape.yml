@@ -24,8 +24,8 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-
-        pip install -r requirements.txt
+        pip install selenium beautifulsoup4 pandas --no-deps
+        
 
     - name: Execute
       run: python scrape.py
