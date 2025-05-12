@@ -8,57 +8,61 @@ import pandas as pd
 import os
 from datetime import datetime
 
-# URL de la página
+# URL objetivo
 url = "https://www.sbs.gob.pe/app/pp/EstadisticasSAEEPortal/Paginas/TIPasivaMercado.aspx?tip=B"
 
-# Configurar opciones para entorno sin cabeza (headless, útil para GitHub Actions)
+# Configuración del navegador (modo headless para GitHub Actions o servidores)
 options = webdriver.ChromeOptions()
 options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
-# Inicializa el navegador
-service = Service()
-driver = webdriver.Chrome(service=service, options=options)
-
-# Cargar la página
-driver.get(url)
+# Crear instancia del navegador
+driver = webdriver.Chrome(service=Service(), options=options)
 
 try:
-    # Esperar a que el contenido esté cargado
+    # Abrir URL
+    driver.get(url)
+
+    # Esperar que el contenido clave cargue
     WebDriverWait(driver, 15).until(
         EC.presence_of_element_located((By.ID, "ctl00_cphContent_lblVAL_TIPMN_TASA"))
     )
 
-    # Obtener HTML cargado
-    html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
+    # Obtener HTML completo
+    soup = BeautifulSoup(driver.page_source, "html.parser")
 
-    # Extraer valores
-    tipmn = soup.find("span", id="ctl00_cphContent_lblVAL_TIPMN_TASA").text.strip()
-    tipmex = soup.find("span", id="ctl00_cphContent_lblVAL_TIPMEX_TASA").text.strip()
+    # Extraer tasas
+    tipmn_span = soup.find("span", id="ctl00_cphContent_lblVAL_TIPMN_TASA")
+    tipmex_span = soup.find("span", id="ctl00_cphContent_lblVAL_TIPMEX_TASA")
 
-    # Crear DataFrame
+    if not tipmn_span or not tipmex_span:
+        raise ValueError("No se pudieron encontrar los elementos de tasa.")
+
+    tipmn = tipmn_span.text.strip()
+    tipmex = tipmex_span.text.strip()
+
+    # Crear DataFrame con los datos
     df = pd.DataFrame({
         "Moneda": ["Nacional (TIPMN)", "Extranjera (TIPMEX)"],
         "Tasa (%)": [tipmn, tipmex],
         "Periodo": ["Anual", "Anual"]
     })
 
-    # Crear carpeta con formato DATA/YYYY-MM-DD-SBS
-    fecha_hoy = datetime.now().strftime("%Y-%m-%d")
-    carpeta = os.path.join("DATA", f"{fecha_hoy}-SBS")
+    # Crear carpeta de salida con formato DATA/yyyy-mm-dd-SBS
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    carpeta = os.path.join("DATA", f"{fecha}-SBS")
     os.makedirs(carpeta, exist_ok=True)
 
     # Guardar CSV
-    output_path = os.path.join(carpeta, "tasas_sbs.csv")
-    df.to_csv(output_path, index=False, encoding="utf-8-sig")
+    salida = os.path.join(carpeta, "tasas_sbs.csv")
+    df.to_csv(salida, index=False, encoding="utf-8-sig")
 
-    print(f"✅ Datos guardados en: {output_path}")
+    print(f"✅ Datos guardados en: {salida}")
     print(df)
 
 except Exception as e:
-    print("❌ Ocurrió un error:", e)
+    print(f"❌ Ocurrió un error: {e}")
 
 finally:
     driver.quit()
