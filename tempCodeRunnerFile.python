@@ -1,0 +1,37 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# Configurar opciones para headless
+chrome_options = Options()
+chrome_options.add_argument("--headless=new")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--window-size=1920,1080")
+chrome_options.binary_location = "/usr/bin/chromium"
+
+# Usar el ChromeDriver preinstalado en GitHub Actions
+service = Service("/usr/bin/chromedriver")
+
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+driver.get("https://www.sbs.gob.pe/app/pp/EstadisticasSAEEPortal/Paginas/TIPasivaMercado.aspx?tip=B")
+
+try:
+    wait = WebDriverWait(driver, 30)
+    tipmn_element = wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphContent_lblVAL_TIPMN_TASA")))
+    tipmex_element = wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphContent_lblVAL_TIPMEX_TASA")))
+
+    tipmn = tipmn_element.text.strip()
+    tipmex = tipmex_element.text.strip()
+
+    print(f"Tasa en MN: {tipmn}")
+    print(f"Tasa en ME: {tipmex}")
+except Exception as e:
+    print(f"❌ Error: {e}")
+finally:
+    driver.quit()
