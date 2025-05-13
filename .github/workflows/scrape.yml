@@ -1,7 +1,7 @@
 name: "Scrape"
 
 on:
-  # Ejecutar manualment
+  # Ejecutar manual
   workflow_dispatch:
   # Ejecutar todos los días a las 6:00 AM UTC (1:00 AM Perú)
   schedule:
