@@ -24,19 +24,23 @@ jobs:
         pip install --upgrade pip
         pip install typing-extensions numpy pytz python-dateutil soupsieve
         pip install selenium beautifulsoup4 pandas --no-deps
-
-    - name: Install specific Chrome version (124.0.6367.91)
-      run: |
-        wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_124.0.6367.91-1_amd64.deb
-        sudo apt install -y ./google-chrome-stable_124.0.6367.91-1_amd64.deb
-
-    - name: Install matching ChromeDriver version (124.0.6367.91)
-      run: |
-        wget https://chromedriver.storage.googleapis.com/124.0.6367.91/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/local/bin/
-        sudo chmod +x /usr/local/bin/chromedriver
-
+    - name: Check out this repo
+        uses: actions/checkout@v2
+    - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+    - name: Installed package list
+        run: apt list --installed
+    - name: Remove Chrome
+        run: sudo apt purge google-chrome-stable
+    - name: Remove default Chromium
+        run: sudo apt purge chromium-browser
+    - name: Install a new Chromium
+        run: sudo apt install -y chromium-browser
+    - name: Install all necessary packages
+        run: pip install requests beautifulsoup4 pandas webdriver-manager selenium
+    
     - name: Run scrape script
       run: python scrape.py
 
