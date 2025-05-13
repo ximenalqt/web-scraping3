@@ -25,23 +25,17 @@ jobs:
         pip install typing-extensions numpy pytz python-dateutil soupsieve
         pip install selenium beautifulsoup4 pandas --no-deps
 
-    - name: Install latest Google Chrome
-      run: |
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt install -y ./google-chrome-stable_current_amd64.deb
-    - name: Install specific Chrome version (124)
+    - name: Install specific Chrome version (124.0.6367.91)
       run: |
         wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_124.0.6367.91-1_amd64.deb
         sudo apt install -y ./google-chrome-stable_124.0.6367.91-1_amd64.deb
 
-    - name: Install matching ChromeDriver version (124)
+    - name: Install matching ChromeDriver version (124.0.6367.91)
       run: |
         wget https://chromedriver.storage.googleapis.com/124.0.6367.91/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
-
-    - 
 
     - name: Run scrape script
       run: python scrape.py
