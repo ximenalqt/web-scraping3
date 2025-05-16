@@ -1,0 +1,46 @@
+name: "Scrape"
+
+on:
+  # Ejecutar manual
+  workflow_dispatch:
+  # Ejecutar todos los días a las 6:00 AM UTC (1:00 AM Perú)
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install typing-extensions numpy pytz python-dateutil soupsieve
+        pip install selenium beautifulsoup4 pandas --no-deps
+
+    - name: Remove Chrome
+      run: sudo apt purge google-chrome-stable
+    - name: Remove default Chromium
+      run: sudo apt purge chromium-browser
+    - name: Install a new Chromium
+      run: sudo apt install -y chromium-browser
+    - name: Install all necessary packages
+      run: pip install requests beautifulsoup4 pandas webdriver-manager selenium
+    
+    - name: Run scrape script
+      run: python scrape_adp.py
+
+    - name: Commit changes to DATA folder
+      run: |
+        git config --global user.email "ximena.quispe.t@uni.pe"
+        git config --global user.name "Ximena Quispe"
+        git add DATA/
+        git diff --staged --quiet || git commit -m 'New ADP entries'
+        git push

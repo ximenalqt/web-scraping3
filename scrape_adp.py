@@ -1,19 +1,27 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
+from datetime import datetime
+import os
+
 
 # Configurar opciones de Chrome
-options = Options()
-# IMPORTANTE: quitar el headless para evitar que bloqueen el scraping
-options.add_argument("--headless")
-options.add_argument("--disable-gpu")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
+chrome_options = Options()
+chrome_options.add_argument("--headless=new")  # Reemplaza "--headless" por "--headless=new"
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--window-size=1920,1080")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--disable-extensions")
+chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
 
-driver = webdriver.Chrome(options=options)
+service = Service("/usr/bin/chromedriver")
+driver = webdriver.Chrome(service=service, options=chrome_options)
 driver.get("https://es.tradingeconomics.com/united-states/adp-employment-change")
 
 # Esperar a que la tabla esté cargada (buscar por clase del <table>)
@@ -38,6 +46,18 @@ for row in rows:
 # Crear el DataFrame
 df = pd.DataFrame(data, columns=["Indicador", "Último", "Anterior", "Unidad", "Referencia"])
 print(df)
+
+ # Crear carpeta de salida con formato DATA/yyyy-mm-dd-SBS
+fecha = datetime.now().strftime("%Y-%m-%d")
+carpeta = os.path.join("DATA", f"{fecha}-Trading-Economics")
+os.makedirs(carpeta, exist_ok=True)
+
+# Guardar CSV
+salida = os.path.join(carpeta, "adp_trading_economics.csv")
+df.to_csv(salida, index=False, encoding="utf-8-sig")
+
+print(f"✅ Datos guardados en: {salida}")
+    
 
 # Cerrar el navegador
 driver.quit()
