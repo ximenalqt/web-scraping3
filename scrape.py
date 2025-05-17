@@ -51,10 +51,13 @@ try:
 
     # Guardar CSV
     salida = os.path.join(carpeta, "tasas_sbs.csv")
-    df.to_csv(salida, index=False, encoding="utf-8-sig")
+    if os.path.exists(salida):
+        print(f"El archivo ya existe y no se volverá a guardar: {salida}")
+    else:
+        df.to_csv(salida, index=False, encoding="utf-8-sig")
 
-    print(f"✅ Datos guardados en: {salida}")
-    print(df)
+        print(f"✅ Datos guardados en: {salida}")
+        print(df)
 
 except Exception as e:
     print(f"❌ Error: {e}")
