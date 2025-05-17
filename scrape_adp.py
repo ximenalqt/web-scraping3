@@ -54,9 +54,12 @@ os.makedirs(carpeta, exist_ok=True)
 
 # Guardar CSV
 salida = os.path.join(carpeta, "adp_trading_economics.csv")
-df.to_csv(salida, index=False, encoding="utf-8-sig")
+if os.path.exists(salida):
+    print(f"El archivo ya existe y no se volverá a guardar: {salida}")
+else:
+    df.to_csv(salida, index=False, encoding="utf-8-sig")
 
-print(f"✅ Datos guardados en: {salida}")
+    print(f"Datos guardados en: {salida}")
     
 
 # Cerrar el navegador
